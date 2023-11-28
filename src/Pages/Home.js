@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@chakra-ui/react";
 import "../Styles/Home.css";
 import {
@@ -23,6 +23,37 @@ import {
 } from "@chakra-ui/react";
 export default function Home() {
   const navigate = useNavigate();
+  const [list, setlist] = useState([]);
+
+  function GetSectorData() {
+    // Retrieve data from localStorage
+    let storedData = localStorage.getItem("sector");
+
+    // Check if there is any data stored
+    if (storedData) {
+      // Parse the stored data into an array
+      let dataArray = JSON.parse(storedData);
+      console.log(dataArray);
+      setlist(dataArray);
+    } else {
+      // If no data is found, return an empty array or handle it as needed
+      setlist([]);
+    }
+  }
+
+  function DeleteSectorData(id) {
+    let storedData = localStorage.getItem("sector");
+    if (storedData) {
+      let dataArray = JSON.parse(storedData);
+      let filteredData = dataArray.filter((item) => item.id != id);
+      localStorage.setItem("sector", JSON.stringify(filteredData));
+      setlist(filteredData);
+    }
+  }
+
+  useEffect(() => {
+    GetSectorData();
+  }, []);
   return (
     <div className="home-main">
       <Card>
@@ -42,26 +73,42 @@ export default function Home() {
               </Tr>
             </Thead>
             <Tbody>
-              <Tr>
-                <Td>inches</Td>
-                <Td>millimetres (mm)</Td>
-                <Td>25.4</Td>
-                <Td>true</Td>
-                <Td>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label="Options"
-                      icon={<HiDotsVertical />}
-                      variant="outline"
-                    />
-                    <MenuList>
-                      <MenuItem>Edit</MenuItem>
-                      <MenuItem>Delete</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Td>
-              </Tr>
+              {list.length > 0 ? (
+                list.map((item, index) => (
+                  <Tr key={index}>
+                    <Td>{index + 1}</Td>
+                    <Td>{item.name}</Td>
+                    <Td>{item.sector}</Td>
+                    <Td>{item.agree.toString()}</Td>
+                    <Td>
+                      <Menu>
+                        <MenuButton
+                          as={IconButton}
+                          aria-label="Options"
+                          icon={<HiDotsVertical />}
+                          variant="outline"
+                        />
+                        <MenuList>
+                          <MenuItem
+                            onClick={() => navigate(`/form/${item.id}`)}
+                          >
+                            Edit
+                          </MenuItem>
+                          <MenuItem onClick={() => DeleteSectorData(item.id)}>
+                            Delete
+                          </MenuItem>
+                        </MenuList>
+                      </Menu>
+                    </Td>
+                  </Tr>
+                ))
+              ) : (
+                <Tr>
+                  <Td colSpan={5} textAlign={"center"}>
+                    No data found
+                  </Td>
+                </Tr>
+              )}
             </Tbody>
           </Table>
         </TableContainer>
