@@ -11,6 +11,10 @@ export default function Home() {
   const navigate = useNavigate();
   const [list, setList] = useState([]);
 
+  const customStyles = {
+    "--home-background-color": "#f7f9fa",
+    "--home-padding": "5%",
+  };
   function getSectorData() {
     let storedData = localStorage.getItem("sector");
     if (storedData) {
@@ -39,7 +43,7 @@ export default function Home() {
   const memoizedList = useMemo(() => list, [list]);
 
   return (
-    <div className="home-main">
+    <div className="home-main" style={customStyles}>
       <Card>
         <HStack justifyContent={"space-between"} p={3}>
           <CustomText fontSize={20}>Sectors</CustomText>

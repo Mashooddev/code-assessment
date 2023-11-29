@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Card, HStack, useLatestRef } from "@chakra-ui/react";
 import { VStack, Box } from "@chakra-ui/react";
 import "../Styles/Form.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import CustomCheckbox from "../Components/CustomCheckbox";
 import CustomInput from "../Components/CustomInput";
 import CustomButton from "../Components/CustomeButton";
@@ -10,6 +10,7 @@ import CustomText from "../Components/CustomText";
 
 export default function Form() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const [formData, setFormData] = useState({
     id: Math.floor(Math.random() * 1000000),
@@ -17,6 +18,13 @@ export default function Form() {
     sector: "",
     agree: false,
   });
+
+  const customStyles = {
+    "main-background-color": "#f7f9fa",
+    "main-padding": "10% 30%",
+    "card-padding": "50px 150px",
+    "card-border-radius": "20px",
+  };
 
   const data = useLatestRef(formData);
 
@@ -75,8 +83,7 @@ export default function Form() {
   }
 
   useEffect(() => {
-    let secotorID = window.location.pathname.split("/")[2];
-    if (secotorID) {
+    if (id) {
       fillData();
     }
   }, []);
@@ -84,13 +91,11 @@ export default function Form() {
   const memoizedData = useMemo(() => data.current, [formData]);
 
   return (
-    <div className="form-main">
+    <div className="form-main" style={customStyles}>
       <Card className="form-main-card">
         <VStack>
           <CustomText fontSize={25}>
-            {window.location.pathname.split("/")[2]
-              ? "Update Sector"
-              : "Add Sector"}
+            {id ? "Update Sector" : "Add Sector"}
           </CustomText>
           <Box
             width={"100%"}
@@ -129,9 +134,8 @@ export default function Form() {
           </Box>
           <CustomButton
             onClick={() => {
-              let secotorID = window.location.pathname.split("/")[2];
-              if (secotorID) {
-                updateSector(secotorID);
+              if (id) {
+                updateSector(id);
               } else {
                 saveSector();
               }

@@ -1,5 +1,5 @@
 .home-main {
-  background-color: #f7f9fa;
-  padding: 5%;
+  background-color: var(--home-background-color);
+  padding: var(--home-padding);
   height: 100vh;
 }
