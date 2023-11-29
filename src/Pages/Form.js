@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Card, HStack, Input, useLatestRef } from "@chakra-ui/react";
-import { VStack, Text, Box, Button } from "@chakra-ui/react";
+import { Card, HStack, useLatestRef } from "@chakra-ui/react";
+import { VStack, Box } from "@chakra-ui/react";
 import "../Styles/Form.css";
-import { Checkbox } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import CustomCheckbox from "../Components/CustomCheckbox";
+import CustomInput from "../Components/CustomInput";
+import CustomButton from "../Components/CustomeButton";
+import CustomText from "../Components/CustomText";
 
 export default function Form() {
   const navigate = useNavigate();
-  const [secotorID, setSectorID] = useState(
-    window.location.pathname.split("/")[2]
-  );
+
   const [formData, setFormData] = useState({
     id: Math.floor(Math.random() * 1000000),
     name: "",
@@ -74,6 +75,7 @@ export default function Form() {
   }
 
   useEffect(() => {
+    let secotorID = window.location.pathname.split("/")[2];
     if (secotorID) {
       fillData();
     }
@@ -85,16 +87,18 @@ export default function Form() {
     <div className="form-main">
       <Card className="form-main-card">
         <VStack>
-          <Text fontSize={25}>
-            {secotorID ? "Update Sector" : "Add Sector"}
-          </Text>
+          <CustomText fontSize={25}>
+            {window.location.pathname.split("/")[2]
+              ? "Update Sector"
+              : "Add Sector"}
+          </CustomText>
           <Box
             width={"100%"}
             display={"flex"}
             flexDirection={"column"}
             alignItems={"start"}
           >
-            <Input
+            <CustomInput
               value={memoizedData.name}
               onChange={(e) =>
                 setFormData({ ...data.current, name: e.target.value })
@@ -104,7 +108,7 @@ export default function Form() {
               errorBorderColor="red.300"
               placeholder="Name"
             />
-            <Input
+            <CustomInput
               value={memoizedData.sector}
               onChange={(e) =>
                 setFormData({ ...data.current, sector: e.target.value })
@@ -115,19 +119,17 @@ export default function Form() {
               placeholder="Sector"
             />
             <HStack mt={4}>
-              <input
+              <CustomCheckbox
                 onChange={(e) =>
                   setFormData({ ...data.current, agree: !data.current.agree })
                 }
-                type="checkbox"
-                id="agree"
                 checked={memoizedData.agree}
               />
-              <Text>Agree to terms</Text>
-            </HStack>{" "}
+            </HStack>
           </Box>
-          <Button
+          <CustomButton
             onClick={() => {
+              let secotorID = window.location.pathname.split("/")[2];
               if (secotorID) {
                 updateSector(secotorID);
               } else {
@@ -137,7 +139,7 @@ export default function Form() {
             mt={5}
           >
             Submit
-          </Button>
+          </CustomButton>
         </VStack>
       </Card>
     </div>

@@ -1,26 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Card } from "@chakra-ui/react";
 import "../Styles/Home.css";
-import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-} from "@chakra-ui/react";
-import { HStack, Text } from "@chakra-ui/react";
-import { Button } from "@chakra-ui/react";
+import { HStack } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { HiDotsVertical } from "react-icons/hi";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  IconButton,
-} from "@chakra-ui/react";
+import CustomButton from "../Components/CustomeButton";
+import CustomTable from "../Components/CusomtTable";
+import CustomText from "../Components/CustomText";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -57,60 +42,16 @@ export default function Home() {
     <div className="home-main">
       <Card>
         <HStack justifyContent={"space-between"} p={3}>
-          <Text fontSize={20}>Sectors</Text>
-          <Button onClick={() => navigate("/form")}>Add Sector</Button>
+          <CustomText fontSize={20}>Sectors</CustomText>
+          <CustomButton onClick={() => navigate("/form")}>
+            Add Sector
+          </CustomButton>
         </HStack>
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>#</Th>
-                <Th>Name</Th>
-                <Th>Sector</Th>
-                <Th>Agree to terms</Th>
-                <Th>Actions</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {memoizedList.length > 0 ? (
-                memoizedList.map((item, index) => (
-                  <Tr key={index}>
-                    <Td>{index + 1}</Td>
-                    <Td>{item.name}</Td>
-                    <Td>{item.sector}</Td>
-                    <Td>{item.agree.toString()}</Td>
-                    <Td>
-                      <Menu>
-                        <MenuButton
-                          as={IconButton}
-                          aria-label="Options"
-                          icon={<HiDotsVertical />}
-                          variant="outline"
-                        />
-                        <MenuList>
-                          <MenuItem
-                            onClick={() => navigate(`/form/${item.id}`)}
-                          >
-                            Edit
-                          </MenuItem>
-                          <MenuItem onClick={() => deleteSectorData(item.id)}>
-                            Delete
-                          </MenuItem>
-                        </MenuList>
-                      </Menu>
-                    </Td>
-                  </Tr>
-                ))
-              ) : (
-                <Tr>
-                  <Td colSpan={5} textAlign={"center"}>
-                    No data found
-                  </Td>
-                </Tr>
-              )}
-            </Tbody>
-          </Table>
-        </TableContainer>
+        <CustomTable
+          data={memoizedList}
+          editItem={(id) => navigate(`/form/${id}`)}
+          deleteItem={deleteSectorData}
+        />
       </Card>
     </div>
   );
