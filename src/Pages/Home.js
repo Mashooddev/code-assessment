@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card } from "@chakra-ui/react";
 import "../Styles/Home.css";
 import {
@@ -21,45 +21,44 @@ import {
   MenuItem,
   IconButton,
 } from "@chakra-ui/react";
+
 export default function Home() {
   const navigate = useNavigate();
-  const [list, setlist] = useState([]);
+  const [list, setList] = useState([]);
 
-  function GetSectorData() {
-    // Retrieve data from localStorage
+  function getSectorData() {
     let storedData = localStorage.getItem("sector");
-
-    // Check if there is any data stored
     if (storedData) {
-      // Parse the stored data into an array
       let dataArray = JSON.parse(storedData);
       console.log(dataArray);
-      setlist(dataArray);
+      setList(dataArray);
     } else {
-      // If no data is found, return an empty array or handle it as needed
-      setlist([]);
+      setList([]);
     }
   }
 
-  function DeleteSectorData(id) {
+  function deleteSectorData(id) {
     let storedData = localStorage.getItem("sector");
     if (storedData) {
       let dataArray = JSON.parse(storedData);
-      let filteredData = dataArray.filter((item) => item.id != id);
+      let filteredData = dataArray.filter((item) => item.id !== id);
       localStorage.setItem("sector", JSON.stringify(filteredData));
-      setlist(filteredData);
+      setList(filteredData);
     }
   }
 
   useEffect(() => {
-    GetSectorData();
+    getSectorData();
   }, []);
+
+  const memoizedList = useMemo(() => list, [list]);
+
   return (
     <div className="home-main">
       <Card>
         <HStack justifyContent={"space-between"} p={3}>
           <Text fontSize={20}>Sectors</Text>
-          <Button onClick={() => navigate("/form")}>Add Sector </Button>
+          <Button onClick={() => navigate("/form")}>Add Sector</Button>
         </HStack>
         <TableContainer>
           <Table variant="simple">
@@ -73,8 +72,8 @@ export default function Home() {
               </Tr>
             </Thead>
             <Tbody>
-              {list.length > 0 ? (
-                list.map((item, index) => (
+              {memoizedList.length > 0 ? (
+                memoizedList.map((item, index) => (
                   <Tr key={index}>
                     <Td>{index + 1}</Td>
                     <Td>{item.name}</Td>
@@ -94,7 +93,7 @@ export default function Home() {
                           >
                             Edit
                           </MenuItem>
-                          <MenuItem onClick={() => DeleteSectorData(item.id)}>
+                          <MenuItem onClick={() => deleteSectorData(item.id)}>
                             Delete
                           </MenuItem>
                         </MenuList>

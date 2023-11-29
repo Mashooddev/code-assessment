@@ -1,64 +1,72 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Card, HStack, Input, useLatestRef } from "@chakra-ui/react";
 import { VStack, Text, Box, Button } from "@chakra-ui/react";
 import "../Styles/Form.css";
 import { Checkbox } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+
 export default function Form() {
   const navigate = useNavigate();
-  const [data, setData] = useState({
+  const [secotorID, setSectorID] = useState(
+    window.location.pathname.split("/")[2]
+  );
+  const [formData, setFormData] = useState({
     id: Math.floor(Math.random() * 1000000),
     name: "",
     sector: "",
     agree: false,
   });
 
-  function ValidateData() {
-    if (data.name && data.sector && data.agree) {
+  const data = useLatestRef(formData);
+
+  function validateData() {
+    if (data.current.name && data.current.sector && data.current.agree) {
       return true;
     }
-    if (data.name.length === 0 && data.sector.length === 0 && !data.agree) {
+    if (
+      data.current.name.length === 0 &&
+      data.current.sector.length === 0 &&
+      !data.current.agree
+    ) {
       alert("Please fill all the fields");
-    } else if (data.name.length === 0) {
+    } else if (data.current.name.length === 0) {
       alert("Please enter name");
-    } else if (data.sector.length === 0) {
+    } else if (data.current.sector.length === 0) {
       alert("Please enter sector");
-    } else if (data.agree === false) {
+    } else if (data.current.agree === false) {
       alert("Please agree to terms");
     }
     return false;
   }
 
-  function SaveSector() {
-    if (ValidateData()) {
+  function saveSector() {
+    if (validateData()) {
       let existingData = JSON.parse(localStorage.getItem("sector")) || [];
-      existingData.push(data);
+      existingData.push(data.current);
       localStorage.setItem("sector", JSON.stringify(existingData));
       navigate("/");
-    } else {
     }
   }
 
-  function FillData() {
+  function fillData() {
     let storedData = localStorage.getItem("sector");
     if (storedData) {
       let dataArray = JSON.parse(storedData);
       let id = window.location.pathname.split("/")[2];
       let data = dataArray.find((item) => item.id == id);
-      console.log(data);
       if (data) {
-        setData(data);
+        setFormData(data);
       }
     }
   }
 
-  function UpdateSector(id) {
-    if (ValidateData()) {
+  function updateSector(id) {
+    if (validateData()) {
       let storedData = localStorage.getItem("sector");
       if (storedData) {
         let dataArray = JSON.parse(storedData);
         let index = dataArray.findIndex((item) => item.id == id);
-        dataArray[index] = data;
+        dataArray[index] = data.current;
         localStorage.setItem("sector", JSON.stringify(dataArray));
         navigate("/");
       }
@@ -66,19 +74,19 @@ export default function Form() {
   }
 
   useEffect(() => {
-    console.log(window.location.pathname.split("/")[2]);
-    if (window.location.pathname.split("/")[2]) {
-      FillData();
+    if (secotorID) {
+      fillData();
     }
   }, []);
+
+  const memoizedData = useMemo(() => data.current, [formData]);
+
   return (
     <div className="form-main">
       <Card className="form-main-card">
         <VStack>
           <Text fontSize={25}>
-            {window.location.pathname.split("/")[2]
-              ? "Update Sector"
-              : "Add Sector"}
+            {secotorID ? "Update Sector" : "Add Sector"}
           </Text>
           <Box
             width={"100%"}
@@ -87,16 +95,20 @@ export default function Form() {
             alignItems={"start"}
           >
             <Input
-              value={data.name}
-              onChange={(e) => setData({ ...data, name: e.target.value })}
+              value={memoizedData.name}
+              onChange={(e) =>
+                setFormData({ ...data.current, name: e.target.value })
+              }
               mt={5}
               variant="outline"
               errorBorderColor="red.300"
               placeholder="Name"
             />
             <Input
-              value={data.sector}
-              onChange={(e) => setData({ ...data, sector: e.target.value })}
+              value={memoizedData.sector}
+              onChange={(e) =>
+                setFormData({ ...data.current, sector: e.target.value })
+              }
               mt={4}
               errorBorderColor="red.300"
               variant="outline"
@@ -104,20 +116,22 @@ export default function Form() {
             />
             <HStack mt={4}>
               <input
-                onChange={(e) => setData({ ...data, agree: !data.agree })}
+                onChange={(e) =>
+                  setFormData({ ...data.current, agree: !data.current.agree })
+                }
                 type="checkbox"
                 id="agree"
-                checked={data.agree}
+                checked={memoizedData.agree}
               />
               <Text>Agree to terms</Text>
             </HStack>{" "}
           </Box>
           <Button
             onClick={() => {
-              if (window.location.pathname.split("/")[2]) {
-                UpdateSector(window.location.pathname.split("/")[2]);
+              if (secotorID) {
+                updateSector(secotorID);
               } else {
-                SaveSector();
+                saveSector();
               }
             }}
             mt={5}
