@@ -13,7 +13,7 @@ export default function Home() {
 
   const customStyles = {
     "--home-background-color": "#f7f9fa",
-    "--home-padding": "5%",
+    "--home-padding": "7%",
   };
   function getSectorData() {
     let storedData = localStorage.getItem("sector");

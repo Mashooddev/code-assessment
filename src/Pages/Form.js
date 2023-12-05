@@ -20,12 +20,11 @@ export default function Form() {
   });
 
   const customStyles = {
-    "main-background-color": "#f7f9fa",
-    "main-padding": "10% 30%",
-    "card-padding": "50px 150px",
-    "card-border-radius": "20px",
+    "--main-background-color": "#f7f9fa",
+    "--main-padding": "10% 30%",
+    "--card-padding": "50px 150px",
+    "--card-border-radius": "20px",
   };
-
   const data = useLatestRef(formData);
 
   function validateData() {
